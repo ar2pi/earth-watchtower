@@ -6,6 +6,21 @@ from utils.db import DB
 from utils.db_init import init_db
 
 NASA_EONET_BASE_URL = 'https://eonet.gsfc.nasa.gov/api/v3'
+CATEGORY_VALUE_HASH = {
+    'volcanoes': 100,
+    'earthquakes': 101,
+    'waterColor': 110,
+    'snow': 111,
+    'seaLakeIce': 112,
+    'severeStorms': 120,
+    'floods': 121,
+    'landslides': 122,
+    'drought': 130,
+    'dustHaze': 131,
+    'tempExtremes': 132,
+    'wildfires': 133,
+    'manmade': 140
+}
 
 def main():
 
@@ -29,13 +44,15 @@ def main():
     query = 'TRUNCATE TABLE categories CASCADE;'
     DB.execute(query)
     for category in categories:
-        query = 'INSERT INTO categories (eonet_id, title, description, link, layers) VALUES (%s, %s, %s, %s, %s);'
+        query = 'INSERT INTO categories (eonet_id, title, description, link, layers, value) VALUES (%s, %s, %s, %s, %s, %s);'
+        category_value = map_category_value(category['id'])
         DB.execute(query, (
             category['id'],
             category['title'],
             category['description'],
             category['link'],
-            category['layers']
+            category['layers'],
+            category_value
         ))
 
     query = 'TRUNCATE TABLE events CASCADE;'
@@ -84,6 +101,9 @@ def main():
                 event['id'],
                 category['id']
             ))
+
+def map_category_value(category_id: str):
+    return CATEGORY_VALUE_HASH[category_id]
 
 if __name__ == '__main__':
     try:

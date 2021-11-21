@@ -26,6 +26,7 @@ CREATE TABLE categories (
     link TEXT,
     description TEXT,
     layers TEXT,
+    value SMALLSERIAL,
     PRIMARY KEY (id, eonet_id)
 );
 

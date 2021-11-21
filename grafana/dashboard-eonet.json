@@ -1,0 +1,367 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": null,
+      "description": "https://eonet.gsfc.nasa.gov/docs/v3",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#a2a59d00",
+                "value": null
+              },
+              {
+                "color": "light-blue",
+                "value": 110
+              },
+              {
+                "color": "semi-dark-blue",
+                "value": 111
+              },
+              {
+                "color": "dark-blue",
+                "value": 112
+              },
+              {
+                "color": "light-yellow",
+                "value": 120
+              },
+              {
+                "color": "semi-dark-yellow",
+                "value": 121
+              },
+              {
+                "color": "dark-yellow",
+                "value": 122
+              },
+              {
+                "color": "light-orange",
+                "value": 130
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": 131
+              },
+              {
+                "color": "dark-orange",
+                "value": 132
+              },
+              {
+                "color": "semi-dark-red",
+                "value": 133
+              },
+              {
+                "color": "dark-purple",
+                "value": 140
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Event Category"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "100": {
+                        "index": 0,
+                        "text": "Volcanoes"
+                      },
+                      "101": {
+                        "index": 1,
+                        "text": "Earthquakes"
+                      },
+                      "110": {
+                        "index": 2,
+                        "text": "Water Color"
+                      },
+                      "111": {
+                        "index": 3,
+                        "text": "Snow"
+                      },
+                      "112": {
+                        "index": 4,
+                        "text": "Sea and Lake Ice"
+                      },
+                      "120": {
+                        "index": 5,
+                        "text": "Severe Storms"
+                      },
+                      "121": {
+                        "index": 6,
+                        "text": "Floods"
+                      },
+                      "122": {
+                        "index": 7,
+                        "text": "Landslides"
+                      },
+                      "130": {
+                        "index": 8,
+                        "text": "Drought"
+                      },
+                      "131": {
+                        "index": 9,
+                        "text": "Dust and Haze"
+                      },
+                      "132": {
+                        "index": 10,
+                        "text": "Temperature Extremes"
+                      },
+                      "133": {
+                        "index": 11,
+                        "text": "Wildfires"
+                      },
+                      "140": {
+                        "index": 12,
+                        "text": "Manmade"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 26,
+        "w": 20,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "basemap": {
+          "config": {},
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "color": {
+                "field": "value",
+                "fixed": "dark-green"
+              },
+              "fillOpacity": 0.4,
+              "shape": "triangle",
+              "showLegend": true,
+              "size": {
+                "fixed": 5,
+                "max": 15,
+                "min": 2
+              }
+            },
+            "location": {
+              "latitude": "latitude",
+              "longitude": "longitude",
+              "mode": "coords"
+            },
+            "type": "markers"
+          }
+        ],
+        "view": {
+          "id": "coords",
+          "lat": 23.96252,
+          "lon": -1.009706,
+          "shared": false,
+          "zoom": 2.47
+        }
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  categories.value,\n  unique_events_data.time,\n\tunique_events_data.geometry[0] AS longitude,\n\tunique_events_data.geometry[1] AS latitude\nFROM (\n\tSELECT DISTINCT ON (events_data.event_eonet_id) \n\t\tevents_data.event_eonet_id,\n\t\tevents_data.time,\n\t\tevents_data.geometry\n\tFROM events_data\n\tORDER BY events_data.event_eonet_id\n) AS unique_events_data\nLEFT OUTER JOIN events_categories ON unique_events_data.event_eonet_id = events_categories.event_eonet_id\nLEFT OUTER JOIN categories ON events_categories.category_eonet_id = categories.eonet_id\nWHERE $__timeFilter(unique_events_data.time)\nORDER BY unique_events_data.time;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": ["magnitude_value"],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "events_data",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Worldwide Natural Events Data",
+      "type": "geomap"
+    },
+    {
+      "datasource": null,
+      "description": "https://eonet.gsfc.nasa.gov/docs/v3",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#a2a59d00",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "legend"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 60
+              },
+              {
+                "id": "custom.align",
+                "value": "center"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "title"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 400
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 14,
+        "w": 20,
+        "x": 0,
+        "y": 26
+      },
+      "id": 3,
+      "options": {
+        "showHeader": true
+      },
+      "pluginVersion": "8.2.5",
+      "targets": [
+        {
+          "format": "table",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  categories.value AS legend,\n  categories.title,\n  categories.description\nFROM categories\nORDER BY categories.value DESC;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": ["magnitude_value"],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "events_data",
+          "timeColumn": "\"time\"",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Events Categories",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 32,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "EONET",
+  "uid": "LikoEZt7z",
+  "version": 15
+}
