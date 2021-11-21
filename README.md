@@ -1,5 +1,7 @@
 # Earth Watchtower
 
+![watchtower](/watchtower.png)
+
 ## Data sources
 
 - https://eonet.gsfc.nasa.gov/docs/v3
@@ -20,10 +22,13 @@
 ### Python environment
 
 ```sh
-cd src/
+# Configure python venv
 pyenv install 3.9.6
 pyenv virtualenv 3.9.6 earth-watchtower-py396
 pyenv activate earth-watchtower-py396
+
+# Install dependencies
+cd src/
 pip install -r requirements.txt
 ```
 
@@ -36,9 +41,11 @@ docker cp psql timescaledb:/home
 docker container exec -it timescaledb sh -c "psql -h localhost -p 5432 -U postgres -a < /home/psql/earth-watchtower-database.sql"
 docker container exec -it timescaledb sh -c "psql -h localhost -p 5432 -U postgres -a earth-watchtower < /home/psql/earth-watchtower-schema.sql"
 ```
-https://docs.timescale.com/  
-https://hub.docker.com/r/timescale/timescaledb  
-https://www.postgresql.org/docs/14/app-psql.html
+
+References:
+- https://docs.timescale.com/  
+- https://hub.docker.com/r/timescale/timescaledb  
+- https://www.postgresql.org/docs/14/app-psql.html
 
 Visualize and manage the database with [pgAdmin](https://www.pgadmin.org/)
 
